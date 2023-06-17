@@ -40,13 +40,12 @@ class FakeNewsView(View):
                 'probability': round(output[0][0] * 100, 2)
             }
             news_object = News(input_text=input_text, text_length=len(input_text), is_genuine=True)
-            print(news_object)
             news_object.save()
         else:
             context = {
                 'input_text': input_text
             }
-            news_object = News(id=100, input_text=input_text, text_length=len(input_text))
+            news_object = News(input_text=input_text, text_length=len(input_text))
             news_object.save()
 
         return render(request, self.template_name, context)
