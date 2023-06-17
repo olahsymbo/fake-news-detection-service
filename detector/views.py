@@ -1,29 +1,18 @@
 import os
+import uuid
 import inspect
 import logging
-
+import traceback  # noqa
 app_path = inspect.getfile(inspect.currentframe())
 sub_dir = os.path.realpath(os.path.dirname(app_path))
 main_dir = os.path.dirname(sub_dir)
-
-import pandas as pd
-
-pd.set_option('display.width', 400)
-pd.set_option('display.max_columns', 20)
-
-import tensorflow as tf
-
-tf.gfile = tf.io.gfile
-logging.basicConfig(level=logging.INFO)
-import traceback  # noqa
-from dotenv import load_dotenv
 
 from django.shortcuts import render
 from django.views import View
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 from .apps import DetectorConfig
-
+from .models import News
 
 NUMBER_WORDS = 100
 
@@ -35,6 +24,7 @@ class FakeNewsView(View):
         return render(request, self.template_name)
 
     def post(self, request):
+        threshold = 0.5
         input_text = request.POST.get('input_text', '')
         tokenizer = DetectorConfig.token_model
         lstm_model = DetectorConfig.lstm_model
@@ -43,15 +33,20 @@ class FakeNewsView(View):
 
         output = lstm_model.predict(test_input)
 
-        if output >= 0.5:
+        if output >= threshold:
             context = {
                 'input_text': input_text,
-                'is_genuine': 1 if output[0][0] >= 0.5 else 0,
+                'is_genuine': 1,
                 'probability': round(output[0][0] * 100, 2)
             }
+            news_object = News(input_text=input_text, text_length=len(input_text), is_genuine=True)
+            print(news_object)
+            news_object.save()
         else:
             context = {
                 'input_text': input_text
             }
+            news_object = News(id=100, input_text=input_text, text_length=len(input_text))
+            news_object.save()
 
         return render(request, self.template_name, context)
