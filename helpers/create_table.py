@@ -26,7 +26,7 @@ cur.execute('''CREATE TABLE News
       (id SERIAL PRIMARY KEY,
       input_text VARCHAR(2500) NOT NULL,
       text_length VARCHAR(250) NOT NULL,
-      is_genuine BOOLEAN,
+      genuine BOOLEAN,
       created_at TIMESTAMPTZ DEFAULT NOW(),
       updated_at TIMESTAMPTZ DEFAULT NOW());''')
 print("Table created successfully")

@@ -8,7 +8,7 @@ class News(models.Model):
     id = models.AutoField(primary_key=True)
     input_text = models.CharField(max_length=2500)
     text_length = models.CharField(max_length=20)
-    is_genuine = models.BooleanField(default=False)
+    genuine = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
 
